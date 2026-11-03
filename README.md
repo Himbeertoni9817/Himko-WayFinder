@@ -8,6 +8,10 @@ Himko WayFinder is a Python program that allows you to import images, draw Marke
 Please note, that the program is available in both english and german, but the english translations isn't 100% complete.
 Also, we encourage you to make your own Maps with this and share them (for free, and please give credit)
 
+## Installation
+Main Program: Just put the content of the .zip in a empty folder, and you're done.
+Maps Pack: Put the Content of the maps Folder inside the .zip into the maps Folder from the Main Program.
+
 ## Libraries
 This project just needs Python and PyQt6.
 To install PyQt6, type in your console:
