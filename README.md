@@ -6,6 +6,7 @@ This software is provided "as is", without warranty of any kind, express or impl
 ## About
 Himko WayFinder is a Python program that allows you to import images, draw Markers and Lines on them and then use it to search for a way between multiple Markers, and save it as a .json file.
 Please note, that the program is available in both english and german, but the english translations isn't 100% complete.
+Also, we encourage you to make your own Maps with this and share them (for free, and please give credit)
 
 ## Libraries
 This project just needs Python and PyQt6.
