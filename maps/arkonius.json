@@ -1,0 +1,235 @@
+{
+    "image": "arkonius.png",
+    "folders": [
+        {
+            "id": "Folder_1",
+            "name": "Lines",
+            "parent": null
+        },
+        {
+            "id": "Folder_2",
+            "name": "\u00d6ffi",
+            "parent": "Folder_1"
+        },
+        {
+            "id": "Folder_3",
+            "name": "Stra\u00dfe",
+            "parent": "Folder_1"
+        },
+        {
+            "id": "Folder_4",
+            "name": "Markers",
+            "parent": null
+        },
+        {
+            "id": "Folder_5",
+            "name": "Bahnhof",
+            "parent": "Folder_4"
+        },
+        {
+            "id": "Folder_6",
+            "name": "Zoo",
+            "parent": "Folder_4"
+        }
+    ],
+    "lines": [
+        {
+            "id": "Line_3",
+            "name": "Line_3",
+            "display_name": "",
+            "p1": [
+                2121.2817091293127,
+                1061.808352174107
+            ],
+            "p2": [
+                1623.3009656287686,
+                1066.324724505403
+            ],
+            "ctrl": [
+                1872.2913373790407,
+                1064.066538339755
+            ],
+            "length_val": 498.0,
+            "length_unit": "m",
+            "node_radius": 8.0,
+            "modes": [
+                "\u00d6PNV"
+            ],
+            "parent": "Folder_2"
+        },
+        {
+            "id": "Line_2",
+            "name": "Line_2",
+            "display_name": "",
+            "p1": [
+                2121.7152985776024,
+                1344.4483637579638
+            ],
+            "p2": [
+                2121.4531295178026,
+                1062.1110728316235
+            ],
+            "ctrl": [
+                2122.0141004931324,
+                1204.5658848037124
+            ],
+            "length_val": 282.3,
+            "length_unit": "m",
+            "node_radius": 8.0,
+            "modes": [
+                "\u00d6PNV"
+            ],
+            "parent": "Folder_2"
+        },
+        {
+            "id": "Line_9",
+            "name": "Line_9",
+            "display_name": "",
+            "p1": [
+                1560.134522468085,
+                1049.0917894092981
+            ],
+            "p2": [
+                1561.1121269311336,
+                1034.7943241372086
+            ],
+            "ctrl": [
+                1560.6233246996094,
+                1041.9430567732534
+            ],
+            "length_val": 14.3,
+            "length_unit": "m",
+            "node_radius": 8.0,
+            "modes": [
+                "Auto",
+                "Fu\u00df",
+                "Fahrrad"
+            ],
+            "parent": "Folder_3"
+        },
+        {
+            "id": "Line_8",
+            "name": "Line_8",
+            "display_name": "",
+            "p1": [
+                1596.4667340852031,
+                1036.6811924013111
+            ],
+            "p2": [
+                1623.2293894645125,
+                1066.5104020428334
+            ],
+            "ctrl": [
+                1599.2080477438476,
+                1043.9758745099075
+            ],
+            "length_val": 40.3,
+            "length_unit": "m",
+            "node_radius": 8.0,
+            "modes": [
+                "Auto",
+                "Fu\u00df",
+                "Fahrrad"
+            ],
+            "parent": "Folder_3"
+        },
+        {
+            "id": "Line_7",
+            "name": "Line_7",
+            "display_name": "",
+            "p1": [
+                1596.0627084907087,
+                1036.5680652348526
+            ],
+            "p2": [
+                1609.1531377523274,
+                1030.7500966741331
+            ],
+            "ctrl": [
+                1602.607923121518,
+                1033.6590809544928
+            ],
+            "length_val": 14.3,
+            "length_unit": "m",
+            "node_radius": 8.0,
+            "modes": [
+                "Auto",
+                "Fu\u00df",
+                "Fahrrad"
+            ],
+            "parent": "Folder_3"
+        },
+        {
+            "id": "Line_5",
+            "name": "Line_5",
+            "display_name": "",
+            "p1": [
+                1560.69237014091,
+                1048.9412995731082
+            ],
+            "p2": [
+                1596.2955827829908,
+                1036.6785606795954
+            ],
+            "ctrl": [
+                1582.1706093718497,
+                1054.8498928422848
+            ],
+            "length_val": 40.3,
+            "length_unit": "m",
+            "node_radius": 8.0,
+            "modes": [
+                "Auto",
+                "Fu\u00df",
+                "Fahrrad"
+            ],
+            "parent": "Folder_3"
+        }
+    ],
+    "markers": [
+        {
+            "id": "Marker_5",
+            "name": "textilfabrik",
+            "display_name": "Textilfabrik",
+            "pos": [
+                2103.2742874483874,
+                1060.982501233527
+            ],
+            "icon": "icons\\marker\\purple.png",
+            "parent": "Folder_5"
+        },
+        {
+            "id": "Marker_6",
+            "name": "zoo",
+            "display_name": "Zoo Bf",
+            "pos": [
+                1623.4755065213812,
+                1065.7445703643698
+            ],
+            "icon": "icons\\marker\\purple.png",
+            "parent": "Folder_5"
+        },
+        {
+            "id": "Marker_4",
+            "name": "hbf",
+            "display_name": "Spawn Hbf",
+            "pos": [
+                2144.703476246937,
+                1344.6848013029503
+            ],
+            "icon": "icons\\marker\\purple.png",
+            "parent": "Folder_5"
+        },
+        {
+            "id": "Marker_3",
+            "name": "zoo_entrance",
+            "display_name": "Zoo Eingang",
+            "pos": [
+                1561.3407488998591,
+                1029.7117508962826
+            ],
+            "icon": "icons\\marker\\green.png",
+            "parent": "Folder_6"
+        }
+    ]
+}
