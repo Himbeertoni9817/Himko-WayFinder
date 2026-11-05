@@ -11,6 +11,7 @@ Also, we encourage you to make your own Maps with this and share them (for free,
 ## Installation
 Main Program: Just put the content of the .zip in a empty folder, and you're done.
 Maps Pack: Put the Content of the maps Folder inside the .zip into the maps Folder from the Main Program.
+Icon Packs: Just put the Files inside /icons/marker/ in the .zip into the /icons/marker/ of the Program.
 
 ## Libraries
 This project just needs Python and PyQt6.
