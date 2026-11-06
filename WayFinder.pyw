@@ -40,7 +40,7 @@ except Exception:
     QOpenGLWidget = QWidget
 
 DEFAULT_GITHUB_OWNER = "himbeertoni9817"
-DEFAULT_GITHUB_REPO = "WayFinder-Maps"
+DEFAULT_GITHUB_REPO = "Himko-WayFinder"
 DEFAULT_GITHUB_BRANCH = "main"
 
 TRANSLATIONS = {
