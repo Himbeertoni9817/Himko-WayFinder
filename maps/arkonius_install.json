@@ -2,8 +2,8 @@
   "id": "arkonius",
   "name": "Arkonius",
   "version": "0.1.0",
-  "description": "Arkonius Map\n\nAuthors: Himbeertoni (Himbeertoni9817)",
-  "map_cover": "arkonius_zooeingang_1.png",
+  "description": "Testupdate für Arkonius",
+  "map_cover": "arkonius_zoobf_2.png",
   "map_file": "arkonius.json",
   "image_file": "arkonius.png",
   "covers": [
