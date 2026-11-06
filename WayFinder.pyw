@@ -3,13 +3,9 @@
 # Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
 # See LICENSE file in the project root for full license terms.
 
-APP_VERSION = "2.0.0"
-CHANGELOG = """Version 2.0.0:
-1.GitHub Powered Map Installer directly in the Program (You can also use your own Repositories)
-2.more efficient Map Saving
-3.New Loading/Saving Menus, instead of Windows File Explorer (For e.g. Linux Compat.)
-4.Full English Translation
-5.more
+APP_VERSION = "2.1.0"
+CHANGELOG = """Version 2.1.0:
+1.The Program now Automatically Checks for Updates and lets you install them directly.
 """
 
 import sys
