@@ -1,7 +1,7 @@
 {
   "id": "arkonius",
   "name": "Arkonius",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Testupdate für Arkonius",
   "map_cover": "arkonius_zoobf_2.png",
   "map_file": "arkonius.json",
