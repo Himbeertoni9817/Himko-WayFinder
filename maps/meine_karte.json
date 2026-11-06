@@ -1,0 +1,11 @@
+{
+  "id": "meine_karte",
+  "title": "Neue Karte",
+  "version": "1.0.0",
+  "description": "",
+  "map_cover": "arkonius_zooeingang_3.png",
+  "image": "",
+  "folders": [],
+  "lines": [],
+  "markers": []
+}
