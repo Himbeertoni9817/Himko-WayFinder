@@ -1,0 +1,23 @@
+{
+  "id": "arkonius",
+  "name": "Arkonius",
+  "version": "0.0.1",
+  "description": "Testversion fürs GitHub Maps Feature",
+  "map_cover": "arkonius_zoobf_1.png",
+  "map_file": "arkonius.json",
+  "image_file": "arkonius.png",
+  "covers": [
+    "arkonius_zoobf_1.png",
+    "arkonius_zoobf_2.png",
+    "arkonius_zoobf_3.png",
+    "arkonius_zooeingang_1.png",
+    "arkonius_zooeingang_2.png",
+    "arkonius_zooeingang_3.png",
+    "arkonius_zooeingang_4.png",
+    "arkonius_zooeingang_vr_1.png"
+  ],
+  "icons": [
+    "cyan.png",
+    "purple.png"
+  ]
+}
