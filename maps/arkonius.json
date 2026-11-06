@@ -1,9 +1,9 @@
 {
   "id": "arkonius",
   "title": "Arkonius",
-  "version": "0.1.0",
-  "description": "Arkonius Map\n\nAuthors: Himbeertoni (Himbeertoni9817)",
-  "map_cover": "arkonius_zoobf_1.png",
+  "version": "0.2.0",
+  "description": "Arkonius Map Test Update\n\nAuthors: Himbeertoni (Himbeertoni9817)",
+  "map_cover": "arkonius_zoobf_2.png",
   "image": "arkonius.png",
   "folders": [
     {
