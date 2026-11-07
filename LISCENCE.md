@@ -16,7 +16,7 @@ Under the following terms:
 * Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made.
 * NonCommercial — You may not use the material for commercial purposes.
 * ShareAlike — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
-* You cannot upload the original, you have to change it.
+* You cannot upload the original, you have to change something.
 * You cannot include any malicious Code.
 
 No warranties are given. The license may not give you all of the permissions necessary for your intended use.
