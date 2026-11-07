@@ -506,8 +506,15 @@ class GitHubMapWorker(QThread):
                     dest = os.path.join(target_folder, clean_rel)
                     os.makedirs(os.path.dirname(dest), exist_ok=True)
                     req = urllib.request.Request(url, headers=headers)
-                    with urllib.request.urlopen(req, timeout=10) as r, open(dest, 'wb') as f:
-                        f.write(r.read())
+                    try:
+                        with urllib.request.urlopen(req, timeout=10) as r, open(dest, 'wb') as f:
+                            f.write(r.read())
+                    except urllib.error.HTTPError as err:
+                        if err.code == 404:
+                            raise Exception(f"Datei nicht auf GitHub gefunden (404):\n'{rel_path}'") from err
+                        raise Exception(f"Fehler bei '{rel_path}': {err}") from err
+                    except Exception as err:
+                        raise Exception(f"Fehler bei '{rel_path}': {err}") from err
 
                 if self.map_data.get('map_file'): download_file(f"maps/{self.map_data['map_file']}", get_maps_dir())
                 if self.map_data.get('image_file'): download_file(f"maps/{self.map_data['image_file']}", get_maps_dir())
@@ -527,7 +534,7 @@ class GitHubMapWorker(QThread):
 
                 self.download_finished.emit(map_id, True, "OK")
             except Exception as e:
-                self.download_finished.emit(self.map_data.get('id', ''), False, f"Download Error: {e}")
+                self.download_finished.emit(self.map_data.get('id', ''), False, str(e))
 
 
 class ClickableLabel(QLabel):
