@@ -920,15 +920,31 @@ class IconGridComboBox(QComboBox):
         self.setView(self._list_view)
 
     def showPopup(self):
+        # Aufklapp-Animationen in Qt deaktivieren
+        QApplication.setEffectEnabled(Qt.UIEffect.UI_AnimateCombo, False)
+        QApplication.setEffectEnabled(Qt.UIEffect.UI_AnimateMenu, False)
+        QApplication.setEffectEnabled(Qt.UIEffect.UI_FadeMenu, False)
+
         combo_bot_left = self.mapToGlobal(QPoint(0, self.height()))
         win = self.window()
         win_bot_y = win.mapToGlobal(QPoint(0, win.height())).y() - 8 if win else 600
         avail_h = win_bot_y - combo_bot_left.y()
         target_h = max(int(self._grid_h * 1.5), min(int(self._grid_h * 3.5), avail_h))
         self._list_view.setFixedHeight(target_h)
+        
         super().showPopup()
+        
         popup = self.view().window()
-        popup.setGeometry(combo_bot_left.x(), combo_bot_left.y(), self._exact_w, target_h + 2)
+        target_x = combo_bot_left.x()
+        
+        screen = QApplication.screenAt(combo_bot_left) or QApplication.primaryScreen()
+        if screen:
+            avail_geo = screen.availableGeometry()
+            max_x = avail_geo.right() - self._exact_w
+            min_x = avail_geo.left()
+            target_x = max(min_x, min(target_x, max_x))
+            
+        popup.setGeometry(target_x, combo_bot_left.y(), self._exact_w, target_h + 2)
 
 
 class LocalMapManagerDialog(QDialog):
