@@ -363,28 +363,28 @@ class AppUpdateDialog(QDialog):
     def __init__(self, current_ver, new_ver, changelog_text, new_code_bytes, parent=None):
         super().__init__(parent)
         self.new_code_bytes = new_code_bytes
-        self.setWindowTitle("🚀 App-Update verfügbar!")
+        self.setWindowTitle("Update Available!")
         self.resize(520, 360)
 
         layout = QVBoxLayout(self)
-        lbl_header = QLabel("<b>Eine neue Version von Himko WayFinder ist verfügbar!</b>")
+        lbl_header = QLabel("<b>A New Version of Himko WayFinder is available</b>")
         lbl_header.setStyleSheet("font-size: 14px;")
         layout.addWidget(lbl_header)
 
-        lbl_vers = QLabel(f"Installiert: <b>{current_ver}</b>  ➔  Neueste Version: <b style='color: #27ae60;'>{new_ver}</b>")
+        lbl_vers = QLabel(f"Current: <b>{current_ver}</b>  ➔  Newest Version: <b style='color: #27ae60;'>{new_ver}</b>")
         layout.addWidget(lbl_vers)
 
-        layout.addWidget(QLabel("<b>Was ist neu (Changelog):</b>"))
+        layout.addWidget(QLabel("<b>Changelog:</b>"))
         txt_change = QTextEdit()
         txt_change.setReadOnly(True)
         txt_change.setPlainText(changelog_text)
         layout.addWidget(txt_change)
 
         btn_box = QHBoxLayout()
-        btn_later = QPushButton("Später")
+        btn_later = QPushButton("Later")
         btn_later.clicked.connect(self.reject)
 
-        btn_update = QPushButton("⚡ Jetzt Aktualisieren & Neustarten")
+        btn_update = QPushButton("Install")
         btn_update.setStyleSheet("background-color: #2ecc71; color: white; font-weight: bold; padding: 6px;")
         btn_update.clicked.connect(self.install_update)
 
@@ -399,14 +399,15 @@ class AppUpdateDialog(QDialog):
                 f.write(self.new_code_bytes)
 
             QMessageBox.information(
-                self, "Erfolg",
-                "WayFinder wurde erfolgreich auf die neueste Version aktualisiert!\n\nDie Anwendung startet jetzt neu."
+                self, "Success",
+                "New Version installed successfully!\n\nRestarting now."
             )
             self.accept()
             QProcess.startDetached(sys.executable, sys.argv)
             QApplication.quit()
         except Exception as e:
-            QMessageBox.critical(self, "Fehler", f"Update konnte nicht gespeichert werden:\n{e}")
+            QMessageBox.critical(self, "Error", f"Update couldn't be saved:\n{e}")
+
 
 
 class GitHubMapWorker(QThread):
