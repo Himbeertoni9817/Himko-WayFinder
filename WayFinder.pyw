@@ -3,9 +3,10 @@
 # Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
 # See LICENSE file in the project root for full license terms.
 
-APP_VERSION = "2.1.0"
-CHANGELOG = """Version 2.1.0:
-1.The Program now Automatically Checks for Updates and lets you install them directly.
+APP_VERSION = "2.1.1"
+CHANGELOG = """Version 2.1.1:
+Bugs:
+1. Improved Image Loading Performance
 """
 
 import sys
@@ -19,7 +20,8 @@ import urllib.error
 from PyQt6.QtCore import Qt, QPointF, QRectF, QLineF, QSignalBlocker, QEvent, QSize, QPoint, QThread, pyqtSignal, QTimer, QProcess
 from PyQt6.QtGui import (
     QPixmap, QPainter, QPen, QColor, QPainterPath, QIcon, QFont, QBrush,
-    QStandardItemModel, QStandardItem, QFontMetrics, QTransform, QPolygonF, QImage
+    QStandardItemModel, QStandardItem, QFontMetrics, QTransform, QPolygonF, QImage,
+    QImageReader
 )
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout,
@@ -42,6 +44,57 @@ except Exception:
 DEFAULT_GITHUB_OWNER = "himbeertoni9817"
 DEFAULT_GITHUB_REPO = "Himko-WayFinder"
 DEFAULT_GITHUB_BRANCH = "main"
+
+IMAGE_CACHE_QIMAGE = {}
+MAX_CACHE_ENTRIES = 400
+
+def load_scaled_qimage(fpath, target_width=250):
+    if not fpath or not os.path.exists(fpath):
+        return QImage()
+
+    cache_key = (fpath, target_width)
+    if cache_key in IMAGE_CACHE_QIMAGE:
+        return IMAGE_CACHE_QIMAGE[cache_key]
+
+    reader = QImageReader(fpath)
+    reader.setAutoTransform(True)
+    orig_size = reader.size()
+
+    img = QImage()
+    if orig_size.isValid() and orig_size.width() > 0:
+        aspect_ratio = orig_size.height() / orig_size.width()
+        target_height = max(1, int(target_width * aspect_ratio))
+        reader.setScaledSize(QSize(target_width, target_height))
+        img = reader.read()
+
+    if img.isNull():
+        raw_img = QImage(fpath)
+        if not raw_img.isNull():
+            img = raw_img.scaledToWidth(target_width, Qt.TransformationMode.SmoothTransformation)
+
+    if not img.isNull():
+        if len(IMAGE_CACHE_QIMAGE) >= MAX_CACHE_ENTRIES:
+            IMAGE_CACHE_QIMAGE.clear()
+        IMAGE_CACHE_QIMAGE[cache_key] = img
+
+    return img
+
+
+class BackgroundThumbnailLoader(QThread):
+    image_loaded = pyqtSignal(str, int, QImage, object)
+
+    def __init__(self, requests):
+        super().__init__()
+        self.requests = requests  # list of (fpath, target_width, user_data)
+
+    def run(self):
+        for fpath, target_width, user_data in self.requests:
+            if self.isInterruptionRequested():
+                break
+            img = load_scaled_qimage(fpath, target_width)
+            if not img.isNull():
+                self.image_loaded.emit(fpath, target_width, img, user_data)
+
 
 TRANSLATIONS = {
     'de': {
@@ -242,7 +295,7 @@ def get_icons_dir():
     return d
 
 def get_ui_icons_dir():
-    d = os.path.join(get_base_dir(), "icons", "ui")
+    d = os.path.join(get_base_dir(), "icons", "app")
     os.makedirs(d, exist_ok=True)
     return d
 
@@ -862,6 +915,7 @@ class LocalMapManagerDialog(QDialog):
         t = TRANSLATIONS[self.main_win.current_lang]
         self.setWindowTitle(t['local_maps_title'])
         self.resize(720, 500)
+        self.loader_thread = None
         
         layout = QVBoxLayout(self)
         self.lbl_title = QLabel(t['local_maps_header'])
@@ -894,6 +948,7 @@ class LocalMapManagerDialog(QDialog):
             return
 
         cols = 3
+        bg_requests = []
         for idx, fname in enumerate(sorted(files)):
             fpath = os.path.join(maps_dir, fname)
             map_name = fname
@@ -915,14 +970,12 @@ class LocalMapManagerDialog(QDialog):
             lbl_pix = QLabel()
             lbl_pix.setFixedHeight(110)
             lbl_pix.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            
+            lbl_pix.setText(t['no_cover'])
+            lbl_pix.setStyleSheet("color: #888;")
+
             cover_path = os.path.join(cover_dir, map_cover) if map_cover else ""
             if cover_path and os.path.exists(cover_path):
-                pix = QPixmap(cover_path)
-                lbl_pix.setPixmap(pix.scaled(180, 100, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
-            else:
-                lbl_pix.setText(t['no_cover'])
-                lbl_pix.setStyleSheet("color: #888;")
+                bg_requests.append((cover_path, 180, lbl_pix))
 
             lbl_name = QLabel(map_name)
             lbl_name.setStyleSheet("font-weight: bold; font-size: 13px;")
@@ -940,6 +993,22 @@ class LocalMapManagerDialog(QDialog):
 
             row, col = idx // cols, idx % cols
             self.grid.addWidget(card, row, col)
+
+        if bg_requests:
+            self.loader_thread = BackgroundThumbnailLoader(bg_requests)
+            self.loader_thread.image_loaded.connect(self.on_cover_loaded)
+            self.loader_thread.start()
+
+    def on_cover_loaded(self, fpath, width, qimg, target_label):
+        if not qimg.isNull() and target_label:
+            target_label.setPixmap(QPixmap.fromImage(qimg))
+            target_label.setStyleSheet("")
+
+    def closeEvent(self, event):
+        if self.loader_thread and self.loader_thread.isRunning():
+            self.loader_thread.requestInterruption()
+            self.loader_thread.wait()
+        super().closeEvent(event)
 
     def load_map(self, fpath):
         self.main_win.load_map_from_filepath(fpath)
@@ -1035,7 +1104,7 @@ class OnlineMapStoreDialog(QDialog):
         self.layout = QVBoxLayout(self)
 
         top_bar = QHBoxLayout()
-        top_bar.addWidget(QLabel("GitHub Owner:"))
+        top_bar.addWidget(QLabel("Repo Owner:"))
         self.txt_owner = QLineEdit(DEFAULT_GITHUB_OWNER)
         top_bar.addWidget(self.txt_owner)
         
@@ -1229,6 +1298,7 @@ class CoverSelectDialog(QDialog):
         t = TRANSLATIONS[self.lang]
         self.setWindowTitle(t['select_images_title'])
         self.resize(580, 480)
+        self.loader_thread = None
         
         self.selected_covers = list(selected_covers)
         self.selected_covers_360 = list(selected_covers_360)
@@ -1258,12 +1328,11 @@ class CoverSelectDialog(QDialog):
             layout.addWidget(lbl_empty)
         else:
             self.table.setRowCount(len(files))
+            bg_requests = []
             for row, fname in enumerate(files):
                 fpath = os.path.join(cover_dir, fname)
                 item_fname = QTableWidgetItem(fname)
-                pix = QPixmap(fpath)
-                if not pix.isNull():
-                    item_fname.setIcon(QIcon(pix.scaled(32, 32, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
+                bg_requests.append((fpath, 48, item_fname))
                 
                 chk_normal = QCheckBox()
                 chk_360 = QCheckBox()
@@ -1284,12 +1353,27 @@ class CoverSelectDialog(QDialog):
                 self.row_data.append((row, fname, fname.lower(), chk_normal, chk_360))
             layout.addWidget(self.table)
 
+            if bg_requests:
+                self.loader_thread = BackgroundThumbnailLoader(bg_requests)
+                self.loader_thread.image_loaded.connect(self.on_icon_loaded)
+                self.loader_thread.start()
+
         btn_box = QHBoxLayout()
         btn_box.addStretch()
         btn_ok = QPushButton(t['confirm'])
         btn_ok.clicked.connect(self.accept)
         btn_box.addWidget(btn_ok)
         layout.addLayout(btn_box)
+
+    def on_icon_loaded(self, fpath, width, qimg, item_fname):
+        if not qimg.isNull() and item_fname:
+            item_fname.setIcon(QIcon(QPixmap.fromImage(qimg)))
+
+    def closeEvent(self, event):
+        if self.loader_thread and self.loader_thread.isRunning():
+            self.loader_thread.requestInterruption()
+            self.loader_thread.wait()
+        super().closeEvent(event)
 
     def filter_items(self, text):
         query = text.lower().strip()
@@ -1689,6 +1773,7 @@ class MainWindow(QMainWindow):
         self.picking_target_marker = False
         self.active_waypoint_btn = None
         self.current_image_filename = ""
+        self.panel_loader_thread = None
         
         self.current_map_id = "meine_karte"
         self.current_map_title = "Neue Karte"
@@ -1824,41 +1909,65 @@ class MainWindow(QMainWindow):
         self.lbl_desc_content.setText(desc_text if desc_text else t['no_description'])
         self.lbl_desc_content.setVisible(True)
         
+        if self.panel_loader_thread and self.panel_loader_thread.isRunning():
+            self.panel_loader_thread.requestInterruption()
+            self.panel_loader_thread.wait()
+
         for l in (self.layout_normal, self.layout_360):
             while l.count() > 0:
                 w = l.takeAt(0).widget()
                 if w: w.deleteLater()
-                    
+
+        bg_requests = []
         cover_dir = get_cover_dir()
+        
         covers = getattr(marker_item, 'covers', [])
         valid_covers = [os.path.join(cover_dir, c) for c in covers if os.path.exists(os.path.join(cover_dir, c))]
         if not valid_covers:
             self.layout_normal.addWidget(QLabel(t['no_covers_selected']))
         else:
             for fpath in valid_covers:
-                pix = QPixmap(fpath)
-                if not pix.isNull():
-                    lbl_img = ClickableLabel(fpath, self.open_full_image_viewer)
-                    lbl_img.setPixmap(pix.scaledToWidth(240, Qt.TransformationMode.SmoothTransformation))
-                    self.layout_normal.addWidget(lbl_img)
-                    
+                lbl_img = ClickableLabel(fpath, self.open_full_image_viewer)
+                lbl_img.setFixedHeight(140)
+                lbl_img.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                lbl_img.setText("...")
+                self.layout_normal.addWidget(lbl_img)
+                bg_requests.append((fpath, 250, lbl_img))
+
         covers_360 = getattr(marker_item, 'covers_360', [])
         valid_covers_360 = [os.path.join(cover_dir, c) for c in covers_360 if os.path.exists(os.path.join(cover_dir, c))]
         if not valid_covers_360:
             self.layout_360.addWidget(QLabel(t['no_covers_360_selected']))
         else:
             for fpath in valid_covers_360:
-                pix = QPixmap(fpath)
-                if not pix.isNull():
-                    lbl_img = ClickableLabel(fpath, self.open_360_image_viewer)
-                    lbl_img.setPixmap(pix.scaledToWidth(240, Qt.TransformationMode.SmoothTransformation))
-                    self.layout_360.addWidget(lbl_img)
-                    
+                lbl_img = ClickableLabel(fpath, self.open_360_image_viewer)
+                lbl_img.setFixedHeight(140)
+                lbl_img.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                lbl_img.setText("...")
+                self.layout_360.addWidget(lbl_img)
+                bg_requests.append((fpath, 250, lbl_img))
+
         self.cover_panel.setVisible(True)
+
+        if bg_requests:
+            self.panel_loader_thread = BackgroundThumbnailLoader(bg_requests)
+            self.panel_loader_thread.image_loaded.connect(self.on_panel_cover_loaded)
+            self.panel_loader_thread.start()
+
+    def on_panel_cover_loaded(self, fpath, width, qimg, target_label):
+        if not qimg.isNull() and target_label:
+            target_label.setFixedHeight(140)
+            target_label.setPixmap(QPixmap.fromImage(qimg))
+            target_label.setText("")
 
     def open_full_image_viewer(self, image_path): ZoomableImageViewerDialog(image_path, self).exec()
     def open_360_image_viewer(self, image_path): Panorama360ViewerDialog(image_path, self).exec()
-    def close_cover_panel(self): self.cover_panel.setVisible(False)
+    
+    def close_cover_panel(self):
+        if self.panel_loader_thread and self.panel_loader_thread.isRunning():
+            self.panel_loader_thread.requestInterruption()
+            self.panel_loader_thread.wait()
+        self.cover_panel.setVisible(False)
 
     def setup_edit_panel(self):
         layout = QHBoxLayout(self.edit_panel)
