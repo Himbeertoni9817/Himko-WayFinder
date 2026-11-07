@@ -3,11 +3,10 @@
 # Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
 # See LICENSE file in the project root for full license terms.
 
-APP_VERSION = "2.2.0"
-CHANGELOG = """Version 2.2.0:
+APP_VERSION = "2.3.0"
+CHANGELOG = """Version 2.3.0:
 Features:
-1. Added Full Translation
-2. Added Option to not Download Images with maps
+1. The Program now Searches for Cover Images in Subfolders inside /cover/ too.
 """
 
 import sys
@@ -303,6 +302,19 @@ def get_cover_dir():
     os.makedirs(d, exist_ok=True)
     return d
 
+def get_all_cover_files():
+    cover_dir = get_cover_dir()
+    valid_exts = ('.png', '.jpg', '.jpeg', '.bmp', '.webp')
+    relative_files = []
+    if os.path.exists(cover_dir):
+        for root, _, files in os.walk(cover_dir):
+            for f in files:
+                if f.lower().endswith(valid_exts):
+                    full_path = os.path.join(root, f)
+                    rel_path = os.path.relpath(full_path, cover_dir).replace("\\", "/")
+                    relative_files.append(rel_path)
+    return sorted(relative_files)
+
 def get_maps_dir():
     d = os.path.join(get_base_dir(), "maps")
     os.makedirs(d, exist_ok=True)
@@ -490,7 +502,9 @@ class GitHubMapWorker(QThread):
                 
                 def download_file(rel_path, target_folder):
                     url = f"{raw_base}/{rel_path}"
-                    dest = os.path.join(target_folder, os.path.basename(rel_path))
+                    clean_rel = rel_path.split('/', 1)[-1] if '/' in rel_path else rel_path
+                    dest = os.path.join(target_folder, clean_rel)
+                    os.makedirs(os.path.dirname(dest), exist_ok=True)
                     req = urllib.request.Request(url, headers=headers)
                     with urllib.request.urlopen(req, timeout=10) as r, open(dest, 'wb') as f:
                         f.write(r.read())
@@ -1084,9 +1098,7 @@ class SaveAndExportDialog(QDialog):
         layout.addWidget(QLabel(t['lbl_cover']))
         self.cmb_cover = QComboBox()
         
-        cover_dir = get_cover_dir()
-        valid_exts = ('.png', '.jpg', '.jpeg', '.bmp', '.webp')
-        cover_files = [f for f in os.listdir(cover_dir) if f.lower().endswith(valid_exts)]
+        cover_files = get_all_cover_files()
         self.cmb_cover.addItem(t['no_cover'], "")
         for cf in sorted(cover_files):
             self.cmb_cover.addItem(cf, cf)
@@ -1399,9 +1411,7 @@ class CoverSelectDialog(QDialog):
         self.table.setColumnWidth(2, 80)
         
         cover_dir = get_cover_dir()
-        valid_exts = ('.png', '.jpg', '.jpeg', '.bmp', '.webp')
-        files = [f for f in os.listdir(cover_dir) if f.lower().endswith(valid_exts)]
-        files.sort()
+        files = get_all_cover_files()
         
         self.row_data = []
         if not files:
@@ -1412,7 +1422,7 @@ class CoverSelectDialog(QDialog):
             self.table.setRowCount(len(files))
             bg_requests = []
             for row, fname in enumerate(files):
-                fpath = os.path.join(cover_dir, fname)
+                fpath = os.path.normpath(os.path.join(cover_dir, fname))
                 item_fname = QTableWidgetItem(fname)
                 bg_requests.append((fpath, 48, item_fname))
                 
@@ -1448,8 +1458,11 @@ class CoverSelectDialog(QDialog):
         layout.addLayout(btn_box)
 
     def on_icon_loaded(self, fpath, width, qimg, item_fname):
-        if not qimg.isNull() and item_fname:
-            item_fname.setIcon(QIcon(QPixmap.fromImage(qimg)))
+        try:
+            if not qimg.isNull() and item_fname:
+                item_fname.setIcon(QIcon(QPixmap.fromImage(qimg)))
+        except Exception:
+            pass
 
     def closeEvent(self, event):
         if self.loader_thread and self.loader_thread.isRunning():
