@@ -3,10 +3,11 @@
 # Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
 # See LICENSE file in the project root for full license terms.
 
-APP_VERSION = "2.1.1"
-CHANGELOG = """Version 2.1.1:
-Bugs:
-1. Improved Image Loading Performance
+APP_VERSION = "2.2.0"
+CHANGELOG = """Version 2.2.0:
+Features:
+1. Added Full Translation
+2. Added Option to not Download Images with maps
 """
 
 import sys
@@ -163,12 +164,21 @@ TRANSLATIONS = {
         'status_connecting': "Verbinde mit GitHub...",
         'btn_install': "Installieren",
         'btn_update': "Aktualisieren",
+        'btn_download_images': "Bilder herunterladen",
         'btn_installed': "Installiert",
+        'dl_covers': "Bilder mit herunterladen",
         'mode_auto': "Auto",
         'mode_opnv': "ÖPNV",
         'mode_fuss': "Fuß",
         'mode_fahrrad': "Fahrrad",
         'mode_flugzeug': "Flugzeug",
+        'update_title': "Update verfügbar",
+        'update_header': "Eine neue Version ist verfügbar",
+        'update_installed': "Installierte Version",
+        'update_latest': "Neueste Version",
+        'update_changelog': "Changelog:",
+        'update_later': "Später",
+        'update_now': "Installieren",
     },
     'en': {
         'edit_mode': "Edit Mode",
@@ -236,12 +246,21 @@ TRANSLATIONS = {
         'status_connecting': "Connecting to GitHub...",
         'btn_install': "Install",
         'btn_update': "Update",
+        'btn_download_images': "Download Images",
         'btn_installed': "Installed",
+        'dl_covers': "Download with Images",
         'mode_auto': "Car",
         'mode_opnv': "Transit",
         'mode_fuss': "Walk",
         'mode_fahrrad': "Bicycle",
         'mode_flugzeug': "Airplane",
+        'update_title': "Update Available!",
+        'update_header': "A new Version is available",
+        'update_installed': "Installed Version",
+        'update_latest': "Latest Version",
+        'update_changelog': "Changelog:",
+        'update_later': "Later",
+        'update_now': "Install Now",
     }
 }
 
@@ -360,31 +379,33 @@ class AppUpdateWorker(QThread):
 
 
 class AppUpdateDialog(QDialog):
-    def __init__(self, current_ver, new_ver, changelog_text, new_code_bytes, parent=None):
+    def __init__(self, current_ver, new_ver, changelog_text, new_code_bytes, lang='de', parent=None):
         super().__init__(parent)
         self.new_code_bytes = new_code_bytes
-        self.setWindowTitle("Update Available!")
+        t = TRANSLATIONS.get(lang, TRANSLATIONS['de'])
+        
+        self.setWindowTitle(t['update_title'])
         self.resize(520, 360)
 
         layout = QVBoxLayout(self)
-        lbl_header = QLabel("<b>A New Version of Himko WayFinder is available</b>")
+        lbl_header = QLabel(f"<b>{t['update_header']}</b>")
         lbl_header.setStyleSheet("font-size: 14px;")
         layout.addWidget(lbl_header)
 
-        lbl_vers = QLabel(f"Current: <b>{current_ver}</b>  ➔  Newest Version: <b style='color: #27ae60;'>{new_ver}</b>")
+        lbl_vers = QLabel(f"{t['update_installed']}: <b>{current_ver}</b>  ➔  {t['update_latest']}: <b style='color: #27ae60;'>{new_ver}</b>")
         layout.addWidget(lbl_vers)
 
-        layout.addWidget(QLabel("<b>Changelog:</b>"))
+        layout.addWidget(QLabel(f"<b>{t['update_changelog']}</b>"))
         txt_change = QTextEdit()
         txt_change.setReadOnly(True)
         txt_change.setPlainText(changelog_text)
         layout.addWidget(txt_change)
 
         btn_box = QHBoxLayout()
-        btn_later = QPushButton("Later")
+        btn_later = QPushButton(t['update_later'])
         btn_later.clicked.connect(self.reject)
 
-        btn_update = QPushButton("Install")
+        btn_update = QPushButton(t['update_now'])
         btn_update.setStyleSheet("background-color: #2ecc71; color: white; font-weight: bold; padding: 6px;")
         btn_update.clicked.connect(self.install_update)
 
@@ -409,14 +430,13 @@ class AppUpdateDialog(QDialog):
             QMessageBox.critical(self, "Error", f"Update couldn't be saved:\n{e}")
 
 
-
 class GitHubMapWorker(QThread):
     manifests_loaded = pyqtSignal(list)
     preview_loaded = pyqtSignal(str, bytes)
     download_finished = pyqtSignal(str, bool, str)
     error_occurred = pyqtSignal(str)
 
-    def __init__(self, action="fetch_manifests", owner=DEFAULT_GITHUB_OWNER, repo=DEFAULT_GITHUB_REPO, branch=DEFAULT_GITHUB_BRANCH, map_data=None, image_name=None):
+    def __init__(self, action="fetch_manifests", owner=DEFAULT_GITHUB_OWNER, repo=DEFAULT_GITHUB_REPO, branch=DEFAULT_GITHUB_BRANCH, map_data=None, image_name=None, download_images=True):
         super().__init__()
         self.action = action
         self.owner = owner
@@ -424,6 +444,7 @@ class GitHubMapWorker(QThread):
         self.branch = branch
         self.map_data = map_data
         self.image_name = image_name
+        self.download_images = download_images
 
     def run(self):
         headers = {'User-Agent': 'WayFinder-App/1.0'}
@@ -476,10 +497,11 @@ class GitHubMapWorker(QThread):
 
                 if self.map_data.get('map_file'): download_file(f"maps/{self.map_data['map_file']}", get_maps_dir())
                 if self.map_data.get('image_file'): download_file(f"maps/{self.map_data['image_file']}", get_maps_dir())
-                if self.map_data.get('map_cover'): download_file(f"cover/{self.map_data['map_cover']}", get_cover_dir())
 
-                for c_file in self.map_data.get('covers', []):
-                    if c_file: download_file(f"cover/{c_file}", get_cover_dir())
+                if self.download_images:
+                    if self.map_data.get('map_cover'): download_file(f"cover/{self.map_data['map_cover']}", get_cover_dir())
+                    for c_file in self.map_data.get('covers', []):
+                        if c_file: download_file(f"cover/{c_file}", get_cover_dir())
 
                 for i_file in self.map_data.get('icons', []):
                     if i_file: download_file(f"icons/marker/{i_file}", get_icons_dir())
@@ -1113,6 +1135,10 @@ class OnlineMapStoreDialog(QDialog):
         self.txt_repo = QLineEdit(DEFAULT_GITHUB_REPO)
         top_bar.addWidget(self.txt_repo)
 
+        self.chk_download_images = QCheckBox(t['dl_covers'])
+        self.chk_download_images.setChecked(True)
+        top_bar.addWidget(self.chk_download_images)
+
         self.btn_refresh = QPushButton(t['refresh_btn'])
         self.btn_refresh.clicked.connect(self.fetch_manifests)
         top_bar.addWidget(self.btn_refresh)
@@ -1171,7 +1197,16 @@ class OnlineMapStoreDialog(QDialog):
         self.lbl_status.setStyleSheet("color: #27ae60; font-weight: bold;")
 
         maps_dir = get_maps_dir()
+        cover_dir = get_cover_dir()
         cols = 3
+
+        def parse_ver(v_str):
+            if not v_str:
+                return (0, 0, 0)
+            try:
+                return tuple(map(int, str(v_str).strip().strip('"\'').split('.')))
+            except Exception:
+                return (0, 0, 0)
 
         for idx, item in enumerate(manifests):
             card = QFrame()
@@ -1219,35 +1254,61 @@ class OnlineMapStoreDialog(QDialog):
 
             map_file = item.get("map_file", "")
             map_id = item.get("id", "")
+            install_json_filename = item.get("_install_filename", f"{map_id}_install.json") if map_id else ""
+            
             local_file_path = os.path.join(maps_dir, map_file) if map_file else ""
-            install_file_path = os.path.join(maps_dir, f"{map_id}_install.json") if map_id else ""
+            install_file_path = os.path.join(maps_dir, install_json_filename) if install_json_filename else ""
 
             local_exists = False
             local_version = ""
 
-            if local_file_path and os.path.exists(local_file_path):
-                local_exists = True
-                try:
-                    with open(local_file_path, 'r', encoding='utf-8') as f:
-                        l_data = json.load(f)
-                        local_version = str(l_data.get("version", "")).strip()
-                except Exception: pass
-            elif install_file_path and os.path.exists(install_file_path):
+            if install_file_path and os.path.exists(install_file_path):
                 local_exists = True
                 try:
                     with open(install_file_path, 'r', encoding='utf-8') as f:
                         l_data = json.load(f)
-                        local_version = str(l_data.get("version", "")).strip()
-                except Exception: pass
+                        raw_v = l_data.get("version")
+                        if raw_v is not None:
+                            local_version = str(raw_v).strip()
+                except Exception:
+                    pass
 
+            if local_file_path and os.path.exists(local_file_path):
+                local_exists = True
+                if not local_version:
+                    try:
+                        with open(local_file_path, 'r', encoding='utf-8') as f:
+                            l_data = json.load(f)
+                            raw_v = l_data.get("version")
+                            if raw_v is not None:
+                                local_version = str(raw_v).strip()
+                    except Exception:
+                        pass
+
+            missing_covers = False
+            if map_cover_file and not os.path.exists(os.path.join(cover_dir, map_cover_file)):
+                missing_covers = True
+
+            if not missing_covers:
+                for c_file in item.get("covers", []):
+                    if c_file and not os.path.exists(os.path.join(cover_dir, c_file)):
+                        missing_covers = True
+                        break
+
+            force_images = False
             if not local_exists:
                 btn_text = t['btn_install']
                 btn_style = "background-color: #2ecc71; color: white; font-weight: bold;"
                 btn_enabled = True
-            elif local_version != github_ver:
+            elif parse_ver(local_version) < parse_ver(github_ver):
                 btn_text = t['btn_update']
                 btn_style = "background-color: #e67e22; color: white; font-weight: bold;"
                 btn_enabled = True
+            elif missing_covers:
+                btn_text = t['btn_download_images']
+                btn_style = "background-color: #3498db; color: white; font-weight: bold;"
+                btn_enabled = True
+                force_images = True
             else:
                 btn_text = t['btn_installed']
                 btn_style = "background-color: #95a5a6; color: white;"
@@ -1256,7 +1317,7 @@ class OnlineMapStoreDialog(QDialog):
             btn_dl = QPushButton(btn_text)
             btn_dl.setStyleSheet(btn_style)
             btn_dl.setEnabled(btn_enabled)
-            btn_dl.clicked.connect(lambda _, m=item, b=btn_dl: self.download_map_package(m, b))
+            btn_dl.clicked.connect(lambda _, m=item, b=btn_dl, fi=force_images: self.download_map_package(m, b, force_images=fi))
             c_lay.addWidget(btn_dl)
 
             row, col = idx // cols, idx % cols
@@ -1268,14 +1329,18 @@ class OnlineMapStoreDialog(QDialog):
         pix.loadFromData(img_bytes)
         label.setPixmap(pix.scaled(180, 100, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
 
-    def download_map_package(self, map_data, button):
+    def download_map_package(self, map_data, button, force_images=False):
         button.setEnabled(False)
         button.setText("...")
+        
+        dl_images = force_images or self.chk_download_images.isChecked()
+
         worker = GitHubMapWorker(
             action="download_package",
             owner=self.txt_owner.text().strip(),
             repo=self.txt_repo.text().strip(),
-            map_data=map_data
+            map_data=map_data,
+            download_images=dl_images
         )
         worker.download_finished.connect(lambda m_id, ok, msg, b=button: self.on_download_complete(ok, msg, b))
         self.track_worker(worker).start()
@@ -1846,7 +1911,10 @@ class MainWindow(QMainWindow):
         self.app_update_worker.start()
 
     def on_app_update_available(self, new_ver, changelog_text, new_code_bytes):
-        dlg = AppUpdateDialog(APP_VERSION, new_ver, changelog_text, new_code_bytes, parent=self)
+        dlg = AppUpdateDialog(
+            APP_VERSION, new_ver, changelog_text, new_code_bytes, 
+            lang=self.current_lang, parent=self
+        )
         dlg.exec()
 
     def setup_top_bar(self):
