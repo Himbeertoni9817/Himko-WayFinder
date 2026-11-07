@@ -1,9 +1,9 @@
 {
   "id": "arkonius",
   "title": "Arkonius",
-  "version": "0.2.0",
-  "description": "Arkonius Map Test Update\n\nAuthors: Himbeertoni (Himbeertoni9817)",
-  "map_cover": "arkonius_zoobf_2.png",
+  "version": "0.1.1",
+  "description": "Arkonius Map\nChangelog:\n-Added Images to some Markers\n\nAuthors: Himbeertoni (Himbeertoni9817)",
+  "map_cover": "arkonius_zooeingang_1.png",
   "image": "arkonius.png",
   "folders": [
     {
@@ -1150,11 +1150,24 @@
       "font_size": 12.0,
       "level": 0,
       "pos": [
-        1599.47,
-        965.82
+        1599.09,
+        965.07
       ],
       "icon": "icons\\marker\\cyan.png",
-      "parent": "folder_354a7196"
+      "parent": "folder_354a7196",
+      "covers": [
+        "arkonius_zoopapageien_1.png",
+        "arkonius_zoopapageien_2.png",
+        "arkonius_zoopapageien_3.png",
+        "arkonius_zoopapageien_4.png",
+        "arkonius_zoopapageien_5.png",
+        "arkonius_zoopapageien_6.png",
+        "arkonius_zoopapageien_7.png",
+        "arkonius_zoopapageien_8.png"
+      ],
+      "covers_360": [
+        "akonius_zoopapageien_vr_1.png"
+      ]
     },
     {
       "id": "marker_30e8cd34",
@@ -1167,7 +1180,15 @@
         1002.3
       ],
       "icon": "icons\\marker\\cyan.png",
-      "parent": "folder_354a7196"
+      "parent": "folder_354a7196",
+      "covers": [
+        "arkonius_zooladen_1.png",
+        "arkonius_zooladen_2.png",
+        "arkonius_zooladen_3.png"
+      ],
+      "covers_360": [
+        "arkonius_zooladen_vr_1.png"
+      ]
     },
     {
       "id": "marker_4e8cbc86",
@@ -1180,7 +1201,14 @@
         992.66
       ],
       "icon": "icons\\marker\\cyan.png",
-      "parent": "folder_354a7196"
+      "parent": "folder_354a7196",
+      "covers": [
+        "arkonius_zoowoelfe_1.png",
+        "arkonius_zoowoelfe_2.png"
+      ],
+      "covers_360": [
+        "arkonius_zoowoelfe_vr_1.png"
+      ]
     },
     {
       "id": "marker_4ca72af5",
@@ -1232,7 +1260,20 @@
         967.71
       ],
       "icon": "icons\\marker\\cyan.png",
-      "parent": "folder_354a7196"
+      "parent": "folder_354a7196",
+      "covers": [
+        "arkonius_zoofrosch_1.png",
+        "arkonius_zoofrosch_2.png",
+        "arkonius_zoofrosch_3.png",
+        "arkonius_zoofrosch_4.png",
+        "arkonius_zoofrosch_5.png",
+        "arkonius_zoofrosch_6.png",
+        "arkonius_zoofrosch_7.png",
+        "arkonius_zoofrosch_8.png"
+      ],
+      "covers_360": [
+        "arkonius_zoofrosch_vr_1.png"
+      ]
     },
     {
       "id": "marker_aaf732f3",
@@ -1323,7 +1364,15 @@
         848.71
       ],
       "icon": "icons\\marker\\cyan.png",
-      "parent": "folder_354a7196"
+      "parent": "folder_354a7196",
+      "covers": [
+        "arkonius_zoolamas_1.png",
+        "arkonius_zoolamas_2.png",
+        "arkonius_zoolamas_3.png",
+        "arkonius_zoolamas_4.png",
+        "arkonius_zoolamas_5.png",
+        "arkonius_zoolamas_6.png"
+      ]
     },
     {
       "id": "marker_d35cab6a",
@@ -1332,11 +1381,22 @@
       "font_size": 12.0,
       "level": 0,
       "pos": [
-        1510.02,
-        885.19
+        1510.35,
+        884.86
       ],
       "icon": "icons\\marker\\cyan.png",
-      "parent": "folder_354a7196"
+      "parent": "folder_354a7196",
+      "covers": [
+        "arkonius_zoowueste_1.png",
+        "arkonius_zoowueste_2.png",
+        "arkonius_zoowueste_3.png",
+        "arkonius_zoowueste_4.png",
+        "arkonius_zoowueste_5.png",
+        "arkonius_zoowueste_6.png"
+      ],
+      "covers_360": [
+        "arkonius_zoowueste_vr_1.png"
+      ]
     },
     {
       "id": "marker_2d55fc84",
