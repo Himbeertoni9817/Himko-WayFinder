@@ -1156,17 +1156,17 @@
       "icon": "icons\\marker\\cyan.png",
       "parent": "folder_354a7196",
       "covers": [
-        "arkonius_zoopapageien_1.png",
-        "arkonius_zoopapageien_2.png",
-        "arkonius_zoopapageien_3.png",
-        "arkonius_zoopapageien_4.png",
-        "arkonius_zoopapageien_5.png",
-        "arkonius_zoopapageien_6.png",
-        "arkonius_zoopapageien_7.png",
-        "arkonius_zoopapageien_8.png"
+        "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_1.png",
+        "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_2.png",
+        "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_3.png",
+        "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_4.png",
+        "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_5.png",
+        "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_6.png",
+        "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_7.png",
+        "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_8.png"
       ],
       "covers_360": [
-        "akonius_zoopapageien_vr_1.png"
+        "Arkonius/Zoo/Papageienhaus/akonius_zoopapageien_vr_1.png"
       ]
     },
     {
