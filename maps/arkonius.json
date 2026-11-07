@@ -1,8 +1,8 @@
 {
   "id": "arkonius",
   "title": "Arkonius",
-  "version": "0.2.2",
-  "description": "Arkonius Map\nChangelog:\n-Added Images to more Markers\n\nAuthors: Himbeertoni (Himbeertoni9817)",
+  "version": "0.2.3",
+  "description": "Arkonius Map\nChangelog:\n-Added Images to all Markers\n-Zoo is now done\n\nAuthors: Himbeertoni (Himbeertoni9817)",
   "map_cover": "Arkonius/Zoo/Eingang/arkonius_zooeingang_1.png",
   "image": "arkonius.png",
   "folders": [
@@ -1322,6 +1322,9 @@
         "Arkonius/Zoo/Restaurant/arkonius_zoorestaurant_6.png",
         "Arkonius/Zoo/Restaurant/arkonius_zoorestaurant_7.png",
         "Arkonius/Zoo/Restaurant/arkonius_zoorestaurant_8.png"
+      ],
+      "covers_360": [
+        "Arkonius/Zoo/Restaurant/arkonius_zoorestaurant_vr_1.png"
       ]
     },
     {
@@ -1335,7 +1338,13 @@
         783.81
       ],
       "icon": "icons\\marker\\cyan.png",
-      "parent": "folder_354a7196"
+      "parent": "folder_354a7196",
+      "covers": [
+        "Arkonius/Zoo/Guerteltiere/guerteltiere_1.png",
+        "Arkonius/Zoo/Guerteltiere/guerteltiere_2.png",
+        "Arkonius/Zoo/Guerteltiere/guerteltiere_3.png",
+        "Arkonius/Zoo/Guerteltiere/guerteltiere_4.png"
+      ]
     },
     {
       "id": "marker_f8ce3de0",
@@ -1348,7 +1357,15 @@
         765.18
       ],
       "icon": "icons\\marker\\cyan.png",
-      "parent": "folder_354a7196"
+      "parent": "folder_354a7196",
+      "covers": [
+        "Arkonius/Zoo/Kamele/kamele_1.png",
+        "Arkonius/Zoo/Kamele/kamele_2.png",
+        "Arkonius/Zoo/Kamele/kamele_3.png",
+        "Arkonius/Zoo/Kamele/kamele_4.png",
+        "Arkonius/Zoo/Kamele/kamele_5.png",
+        "Arkonius/Zoo/Kamele/kamele_6.png"
+      ]
     },
     {
       "id": "marker_89e9d7c3",
