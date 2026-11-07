@@ -1,11 +1,5 @@
 {
-  "id": "arkonius",
-  "name": "Arkonius",
-  "version": "0.2.2",
-  "description": "Arkonius Map\nChangelog:\n-Added Images to more Markers\n\nAuthors: Himbeertoni (Himbeertoni9817)",
-  "map_cover": "Arkonius/Zoo/Eingang/arkonius_zooeingang_1.png",
-  "map_file": "arkonius.json",
-  "image_file": "arkonius.png",
+  "_install_filename": "arkonius_install.json",
   "covers": [
     "Arkonius/Bhf/ZooBf/arkonius_zoobf_1.png",
     "Arkonius/Bhf/ZooBf/arkonius_zoobf_2.png",
@@ -74,18 +68,25 @@
     "Arkonius/Zoo/Wueste/arkonius_zoowueste_5.png",
     "Arkonius/Zoo/Wueste/arkonius_zoowueste_6.png",
     "Arkonius/Zoo/Wueste/arkonius_zoowueste_vr_1.png",
-    "akonius_zoopapageien_vr_1.png",
-    "arkonius_zoopapageien_1.png",
-    "arkonius_zoopapageien_2.png",
-    "arkonius_zoopapageien_3.png",
-    "arkonius_zoopapageien_4.png",
-    "arkonius_zoopapageien_5.png",
-    "arkonius_zoopapageien_6.png",
-    "arkonius_zoopapageien_7.png",
-    "arkonius_zoopapageien_8.png"
+    "Arkonius/Zoo/Papageienhaus/akonius_zoopapageien_vr_1.png",
+    "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_1.png",
+    "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_2.png",
+    "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_3.png",
+    "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_4.png",
+    "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_5.png",
+    "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_6.png",
+    "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_7.png",
+    "Arkonius/Zoo/Papageienhaus/arkonius_zoopapageien_8.png"
   ],
+  "description": "Arkonius Map\nChangelog:\n-Added Images to more Markers\n\nAuthors: Himbeertoni (Himbeertoni9817)",
   "icons": [
     "cyan.png",
     "purple.png"
-  ]
+  ],
+  "id": "arkonius",
+  "image_file": "arkonius.png",
+  "map_cover": "Arkonius/Zoo/Eingang/arkonius_zooeingang_1.png",
+  "map_file": "arkonius.json",
+  "name": "Arkonius",
+  "version": "0.2.2"
 }
